@@ -125,19 +125,14 @@ func startApp(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	fmt.Println("Running", cmd)
 }
 
-func focusApp(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	decoder := json.NewDecoder(r.Body)
-
-	type Params struct {
-		Pid int
-	}
-	var params Params
-	err := decoder.Decode(&params)
+func focusApp(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	pidStr := params.ByName("pid")
+	pid, err := strconv.Atoi(pidStr)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	fmt.Println("Attempting to focus ", params)
-	goforeground.Activate(params.Pid)
+	goforeground.Activate(pid)
 }
